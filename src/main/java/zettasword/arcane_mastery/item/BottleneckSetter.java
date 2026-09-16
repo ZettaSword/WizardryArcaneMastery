@@ -15,28 +15,38 @@ import zettasword.arcane_mastery.cap.ArcaneData;
 import java.util.List;
 
 public class BottleneckSetter extends Item {
-    private final int bottle;
-    public BottleneckSetter(int bottle, Rarity rarity) {
+    private final int requiredBottleneckLevel;
+
+    public BottleneckSetter(int requiredBottleneckLevel, Rarity rarity) {
         super(new Item.Properties().stacksTo(1).rarity(rarity));
-        this.bottle = bottle;
+        this.requiredBottleneckLevel = requiredBottleneckLevel;
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide()){
+        if (!level.isClientSide()) {
             ArcaneData.get(player).ifPresent(data -> {
-                if (data.setBottleneck(this.bottle)){
-                    player.sendSystemMessage(Component.translatable("arcane_mastery.bottleneck_changed"));
-                    player.getItemInHand(hand).shrink(1);
+                // Attempt to increment the bottleneck counter
+                if (data.setBottleneck(this.requiredBottleneckLevel)) {
+                    player.sendSystemMessage(Component.translatable("arcane_mastery.bottleneck.success"));
+                    player.getItemInHand(hand).shrink(1); // Consume the item
+                } else {
+                    // Provide specific feedback on why it failed
+                    if (data.getBottleneck() >= this.requiredBottleneckLevel) {
+                        player.sendSystemMessage(Component.translatable("arcane_mastery.bottleneck.already_unlocked"));
+                    } else {
+                        player.sendSystemMessage(Component.translatable("arcane_mastery.bottleneck.wrong_tier"));
+                    }
                 }
             });
         }
-        return super.use(level, player, hand);
+        // Return success to prevent weird client-side animation glitches
+        return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 
     @Override
-    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> list, TooltipFlag p_41424_) {
-        super.appendHoverText(p_41421_, p_41422_, list, p_41424_);
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
+        super.appendHoverText(stack, level, list, flag);
         list.add(Component.translatable("item.arcane_mastery.bottleneck.desc"));
     }
 }

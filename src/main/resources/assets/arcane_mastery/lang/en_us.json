@@ -2,7 +2,7 @@
   "arcane_mastery.not_enough_mana": "Not enough mana!",
   "arcane_mastery.tier": "Tier: %s (%s%%)",
   "arcane_mastery.tier_mastered": "Tier: %s",
-  "arcane_mastery.tier_bottleneck": "Tier: %s (Use Scroll of Breakthrough to ascend your tier)",
+  "arcane_mastery.tier_bottleneck": "Tier: %s [100% - Use Scroll of Breakthrough]",
   "arcane_mastery.novice": "Novice",
   "arcane_mastery.apprentice": "Apprentice",
   "arcane_mastery.advanced": "Mage",
@@ -16,5 +16,12 @@
   "item.arcane_mastery.bottleneck.desc": "Use when you hit the bottleneck and cannot proceed further. Unlocks respective tier.",
 
 
-  "creativetab.arcane_mastery": "Arcane Mastery"
+  "creativetab.arcane_mastery": "Arcane Mastery",
+  "arcane_mastery.tier_ascended": "You feel a surge of power! You have ascended to the %s tier.",
+  "arcane_mastery.bottleneck_blocked": "Your magical growth has stalled.You must break through your bottleneck to advance further.",
+
+  "arcane_mastery.bottleneck.success": "Your tier bottleneck has been broken.",
+  "arcane_mastery.bottleneck.already_unlocked": "You have already broken through this bottleneck!",
+  "arcane_mastery.bottleneck.wrong_tier": "This scroll resonates with a different tier of magic. You are not ready for it yet."
+
 }

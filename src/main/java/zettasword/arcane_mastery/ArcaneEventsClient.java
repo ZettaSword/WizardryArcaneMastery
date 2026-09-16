@@ -84,28 +84,32 @@ public class ArcaneEventsClient {
             if (ArcaneConfig.renderTierText) {
                 SpellTier tier = data.getCurrentTier();
                 Component tiered = getTier(tier);
-                // Percentage until max for this tier.
+
                 int requirement = getTierReq(tier);
                 int cur_req = getTierCur(tier);
-                //ArcaneMastery.LOGGER.warn("Req:{} , Cur_Req: {} , Max Mana {}", requirement, cur_req, data.getMaxMana());
-                float count = ((float)(data.getMaxMana() - cur_req)/(float)(requirement - cur_req)) * 100F;
+                float count = ((float)(data.getMaxMana() - cur_req) / (float)(requirement - cur_req)) * 100F;
                 int mastery = (int) Math.floor(count);
 
                 if (tier != SpellTiers.MASTER) {
-                    if (cur_req - 1 != data.getMaxMana()) {
-                        drawScaledStringToWidth(guiGraphics, font, Component.translatable("arcane_mastery.tier", tiered, mastery),
-                                ArcaneConfig.text_x, ArcaneConfig.text_y,
-                                2.0F, Color.WHITE.getRGB(), 50, false);
-                    }else{
+                    // Check if player is exactly 1 point away from the next tier
+                    boolean isAtBottleneckThreshold = (data.getMaxMana() == requirement - 1);
+                    // Check if they haven't cleared the bottleneck yet
+                    boolean needsScroll = data.getBottleneck() < (tier.getLevel() + 1);
+
+                    if (isAtBottleneckThreshold && needsScroll && ArcaneConfig.bottlenecks) {
                         drawScaledStringToWidth(guiGraphics, font, Component.translatable("arcane_mastery.tier_bottleneck", tiered),
                                 ArcaneConfig.text_x, ArcaneConfig.text_y,
-                                2.0F, Color.WHITE.getRGB(), 50, false);
+                                2.0F, 0xffd700, 120, false);
+                    } else {
+                        // Normal progression text in WHITE
+                        drawScaledStringToWidth(guiGraphics, font, Component.translatable("arcane_mastery.tier", tiered, mastery),
+                                ArcaneConfig.text_x, ArcaneConfig.text_y,
+                                2.0F, java.awt.Color.WHITE.getRGB(), 50, false);
                     }
-
-                }else{
+                } else {
                     drawScaledStringToWidth(guiGraphics, font, Component.translatable("arcane_mastery.tier_mastered", tiered),
                             ArcaneConfig.text_x, ArcaneConfig.text_y,
-                            2.0F, Color.WHITE.getRGB(), 50, false);
+                            2.0F, java.awt.Color.WHITE.getRGB(), 50, false);
                 }
             }
 

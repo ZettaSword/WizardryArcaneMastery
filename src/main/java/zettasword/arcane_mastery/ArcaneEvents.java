@@ -116,69 +116,85 @@ public class ArcaneEvents {
     }
 
     public static void onAfterCast(SpellCastEvent.Post event){
-        if (event.getSource() == SpellCastEvent.Sources.WAND
-                && event.getCaster() instanceof Player player) {
+        if (event.getSource() == SpellCastEvent.Sources.WAND && event.getCaster() instanceof Player player) {
             WizardData wizardData = Services.OBJECT_DATA.getWizardData(player);
             if (player.isCreative()) return;
+
             if (!event.getLevel().isClientSide()) {
                 ArcaneData.get(player).ifPresent(data -> {
-                    SpellTier tier;
-                    if (data.getMaxMana() >= ArcaneConfig.tier_apprentice){
-                        tier = SpellTiers.APPRENTICE;
-                        if (data.getMaxMana() >= ArcaneConfig.tier_advanced){
-                            tier = SpellTiers.ADVANCED;
-                            if (data.getMaxMana() >= ArcaneConfig.tier_master){
-                                tier = SpellTiers.MASTER;
-                            }
-                        }
-                        data.setTier(tier);
-                    }
+                    SpellTier currentTier = data.getCurrentTier();
+                    int nextTierReq = getTierReq(currentTier);
 
+                    // 1. Handle Progress Gain
                     if (data.getProgress() < ArcaneConfig.progress_to_gain) {
-                        // Additional variables.
-                        if ((wizardData != null && ArcaneConfig.antiCheese)) {
+                        if (wizardData != null && ArcaneConfig.antiCheese) {
                             if (wizardData.countRecentCasts(event.getSpell()) <= 3) {
                                 data.addProgress(1);
                             }
-                        }else{
+                        } else {
                             data.addProgress(1);
                         }
-
-                        //ArcaneMastery.LOGGER.warn("ARCANE: ADDED PROGRESS {}", data.getProgress());
                     } else {
-                        if (ArcaneConfig.bottlenecks) {
-                            int req = getTierReq(data.getCurrentTier());
-                            if (req - 1 == data.getMaxMana()) { // If we hit bottleneck
-                                if (data.getBottleneck() >= data.getCurrentTier().getLevel()) {
-                                    data.addMaxManaRemoveProgress(1, 0);
-                                }
-                            }else{
+                        // Progress is full. Attempt to convert to Max Mana.
+
+                        // Are we exactly 1 point away from the next tier?
+                        boolean isAtBottleneck = (currentTier != SpellTiers.MASTER) && (data.getMaxMana() == nextTierReq - 1);
+
+                        if (ArcaneConfig.bottlenecks && isAtBottleneck) {
+                            // The required bottleneck level is the level of the tier we are trying to reach
+                            // e.g., Novice (0) trying to reach Apprentice (1) requires bottleneck >= 1
+                            int requiredBottleneck = currentTier.getLevel() + 1;
+
+                            if (data.getBottleneck() >= requiredBottleneck) {
+                                // Bottleneck cleared via item! Allow progression.
                                 data.addMaxManaRemoveProgress(1, 0);
                             }
-                        }else{
+                        } else {
+                            // Not at a bottleneck, or bottlenecks are disabled in config. Allow normal progression.
                             data.addMaxManaRemoveProgress(1, 0);
                         }
-                        //ArcaneMastery.LOGGER.warn("ARCANE: ADDED MAX MANA {} progress, {} max mana", data.getProgress(), data.getMaxMana());
                     }
 
-                    // Bonus for Novice tier to get Apprentice faster.
-                    if (data.getCurrentTier() == SpellTiers.NOVICE && data.getMaxMana() < ArcaneConfig.tier_apprentice-1){
+                    // 2. Handle Tier Upgrade (AFTER maxMana might have increased)
+                    SpellTier newTier = currentTier;
+                    if (data.getMaxMana() >= ArcaneConfig.tier_master) {
+                        newTier = SpellTiers.MASTER;
+                    } else if (data.getMaxMana() >= ArcaneConfig.tier_advanced) {
+                        newTier = SpellTiers.ADVANCED;
+                    } else if (data.getMaxMana() >= ArcaneConfig.tier_apprentice) {
+                        newTier = SpellTiers.APPRENTICE;
+                    }
+
+                    // If the tier changed, apply it and notify the player
+                    if (newTier != currentTier) {
+                        data.setTier(newTier);
+                        data.setBottleneck(newTier.getLevel());
+                        player.sendSystemMessage(Component.translatable("arcane_mastery.tier_ascended", getTierName(newTier)));
+                    }
+
+                    // 3. Bonus for Novice tier to get Apprentice faster.
+                    // Note: The "< - 1" ensures this bonus stops triggering right when they hit the bottleneck, which is perfect.
+                    if (currentTier == SpellTiers.NOVICE && data.getMaxMana() < ArcaneConfig.tier_apprentice - 1){
                         data.addProgress(1);
-                        //ArcaneMastery.LOGGER.warn("ARCANE: NOVICE BONUS! {}", data.getProgress());
                     }
-
-                    // TODO: Randomly make quotes appear like: You feel progress; Your senses become better; Your soul becomes stronger; etc.
-
                 });
             }
         }
+    }
+
+    public static Component getTierName(SpellTier tier){
+        if (tier == SpellTiers.NOVICE) return Component.translatable("arcane_mastery.novice");
+        if (tier == SpellTiers.APPRENTICE) return Component.translatable("arcane_mastery.apprentice");
+        if (tier == SpellTiers.ADVANCED) return Component.translatable("arcane_mastery.advanced");
+        if (tier == SpellTiers.MASTER) return Component.translatable("arcane_mastery.master");
+        return Component.translatable("arcane_mastery.master");
     }
 
     public static int getTierReq(SpellTier tier){
         if (tier == SpellTiers.NOVICE) return ArcaneConfig.tier_apprentice;
         if (tier == SpellTiers.APPRENTICE) return ArcaneConfig.tier_advanced;
         if (tier == SpellTiers.ADVANCED) return ArcaneConfig.tier_master;
-        return ArcaneConfig.tier_master;
+        return ArcaneConfig.tier_master; // Master has no next tier, safe fallback
     }
 
     public static void onSpellBind(SpellBindEvent event){
