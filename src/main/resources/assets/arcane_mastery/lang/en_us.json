@@ -1,0 +1,20 @@
+{
+  "arcane_mastery.not_enough_mana": "Not enough mana!",
+  "arcane_mastery.tier": "Tier: %s (%s%%)",
+  "arcane_mastery.tier_mastered": "Tier: %s",
+  "arcane_mastery.tier_bottleneck": "Tier: %s (Use Scroll of Breakthrough to ascend your tier)",
+  "arcane_mastery.novice": "Novice",
+  "arcane_mastery.apprentice": "Apprentice",
+  "arcane_mastery.advanced": "Mage",
+  "arcane_mastery.master": "Archmage",
+  "arcane_mastery.not_enough_mastery": "You feel your tier is not enough for this.",
+  "arcane_mastery.bottleneck_changed": "You feel like you can breakthrough to next Tier now!",
+
+  "item.arcane_mastery.bottleneck_apprentice": "Scroll of Breakthrough (Novice -> Apprentice)",
+  "item.arcane_mastery.bottleneck_advanced": "Scroll of Breakthrough (Apprentice -> Advanced)",
+  "item.arcane_mastery.bottleneck_master": "Scroll of Breakthrough (Advanced -> Master)",
+  "item.arcane_mastery.bottleneck.desc": "Use when you hit the bottleneck and cannot proceed further. Unlocks respective tier.",
+
+
+  "creativetab.arcane_mastery": "Arcane Mastery"
+}

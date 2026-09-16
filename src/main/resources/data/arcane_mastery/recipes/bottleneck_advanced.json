@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "GTG",
+    "GGG"
+  ],
+  "key": {
+    "G": { "item": "minecraft:gold_block" },
+    "T": { "item": "ebwizardry:arcane_tome_advanced" }
+  },
+  "result": {
+    "item": "arcane_mastery:bottleneck_advanced",
+    "count": 1
+  },
+  "criteria": {
+    "has_arcane_tome_advanced": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["ebwizardry:arcane_tome_advanced"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_arcane_tome_advanced"]
+  ]
+}

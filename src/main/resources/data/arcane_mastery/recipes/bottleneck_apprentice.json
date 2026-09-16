@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "GTG",
+    "GGG"
+  ],
+  "key": {
+    "G": { "item": "minecraft:amethyst_shard" },
+    "T": { "item": "ebwizardry:arcane_tome_apprentice" }
+  },
+  "result": {
+    "item": "arcane_mastery:bottleneck_apprentice",
+    "count": 1
+  },
+  "criteria": {
+    "has_arcane_tome_apprentice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["ebwizardry:arcane_tome_apprentice"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_arcane_tome_apprentice"]
+  ]
+}

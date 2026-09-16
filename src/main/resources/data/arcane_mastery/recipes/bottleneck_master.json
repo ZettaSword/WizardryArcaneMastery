@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GHG",
+    "HTH",
+    "GHG"
+  ],
+  "key": {
+    "G": { "item": "minecraft:nether_bricks" },
+    "H": { "item": "minecraft:ender_eye" },
+    "T": { "item": "ebwizardry:arcane_tome_master" }
+  },
+  "result": {
+    "item": "arcane_mastery:bottleneck_master",
+    "count": 1
+  },
+  "criteria": {
+    "has_arcane_tome_master": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["ebwizardry:arcane_tome_master"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_arcane_tome_master"]
+  ]
+}
