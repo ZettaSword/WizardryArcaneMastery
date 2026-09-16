@@ -73,6 +73,11 @@ public class ArcaneConfig
             .comment("To progress to next tier you need use an item?")
             .define("bottlenecks", true);
 
+    private static final ForgeConfigSpec.BooleanValue HIDE_MANA_WHEN_FULL = BUILDER
+            .comment("Hide Mana bar when it's full?")
+            .define("hideManaWhenFull", true);
+
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean renderTierText;
@@ -95,6 +100,7 @@ public class ArcaneConfig
 
     public static boolean antiCheese;
     public static boolean bottlenecks;
+    public static boolean hideManaWhenFull;
 
 
     @SubscribeEvent
@@ -119,5 +125,6 @@ public class ArcaneConfig
         default_max_mana = DEFAULT_MAX_MANA.get();
         antiCheese = ANTI_CHEESE.get();
         bottlenecks = BOTTLENECKS.get();
+        hideManaWhenFull = HIDE_MANA_WHEN_FULL.get();
     }
 }

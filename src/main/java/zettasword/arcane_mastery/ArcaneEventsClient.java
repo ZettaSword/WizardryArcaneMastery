@@ -114,7 +114,13 @@ public class ArcaneEventsClient {
             }
 
             if (ArcaneConfig.renderManaText) {
-                if (data.getMana() != data.getMaxMana()) {
+                if (ArcaneConfig.hideManaWhenFull) {
+                    if (data.getMana() != data.getMaxMana()) {
+                        drawScaledStringToWidth(guiGraphics, font, Component.literal(data.getMana() + " / " + data.getMaxMana() + " MP")
+                                , ArcaneConfig.text_mana_x, ArcaneConfig.text_mana_y,
+                                1.0F, Color.WHITE.getRGB(), 50, false);
+                    }
+                }else{
                     drawScaledStringToWidth(guiGraphics, font, Component.literal(data.getMana() + " / " + data.getMaxMana() + " MP")
                             , ArcaneConfig.text_mana_x, ArcaneConfig.text_mana_y,
                             1.0F, Color.WHITE.getRGB(), 50, false);
